@@ -1,0 +1,41 @@
+name: CI/CD Pipeline for Python App
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run Tests
+        run: |
+          python -m unittest discover -s tests
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ci-cd-python-app .
+
+      # Optional: Tag and push image if you plan to use a container registry.
+      # - name: Log in to Docker Hub
+      #   run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      #
+      # - name: Push Docker Image
+      #   run: |
+      #     docker tag ci-cd-python-app your_dockerhub_username/ci-cd-python-app:latest
+      #     docker push your_dockerhub_username/ci-cd-python-app:latest
