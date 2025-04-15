@@ -1,7 +1,6 @@
 # app.py
 def greet(name):
-    reversed_name = name[::-1]  # Reverse the user's name
-    return f"Hello, {reversed_name}!"
+    return f"Hello, {name}!"
 
 if __name__ == "__main__":
     user = input("Enter your name: ")
