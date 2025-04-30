@@ -65,7 +65,7 @@ jobs:
 
       # Step 10: Upload Pipeline Logs
       - name: Upload Pipeline Logs
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: pipeline-logs
           path: /mnt/cs_devops/ci-cd-python/latest_build/logs/             
