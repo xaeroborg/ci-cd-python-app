@@ -55,6 +55,7 @@ jobs:
         run: |
           mkdir -p /mnt/cs_devops/ci-cd-python/latest_build/logs
           docker logs ci-cd-python-app > /mnt/cs_devops/ci-cd-python/latest_build/logs/pipeline_logs.txt
+          sleep 5  # Ensure logs are fully flushed before stopping the container
 
       # Step 9: Cleanup (Remove Container After Logging)
       - name: Remove Container After Logging
@@ -64,7 +65,7 @@ jobs:
 
       # Step 10: Upload Pipeline Logs
       - name: Upload Pipeline Logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: pipeline-logs
           path: /mnt/cs_devops/ci-cd-python/latest_build/logs/             
