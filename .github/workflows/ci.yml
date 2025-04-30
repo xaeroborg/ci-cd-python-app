@@ -43,5 +43,17 @@ jobs:
         run: |
           mkdir -p /mnt/cs_devops/ci-cd-python/latest_build  # Ensure the directory exists
           docker save -o /mnt/cs_devops/ci-cd-python/latest_build/ci-cd-python-app_${{ env.IMAGE_TAG }}.tar ci-cd-python-app:${{ env.IMAGE_TAG }}
-        
-      # just a test to trigger pipeline build on PUSH, 2nd attempt, 3rd attempt       
+     
+      # Step 7: Save Logs
+      - name: Save Logs as Artifact
+        run: |
+          mkdir -p latest_build/logs
+          docker logs ci-cd-python-app > latest_build/logs/pipeline_logs.txt
+          mv latest_build/logs /mnt/cs_devops/ci-cd-python/latest_build/
+
+      - name: Upload Pipeline Logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: pipeline-logs
+          path: latest_build/logs/  
+             
