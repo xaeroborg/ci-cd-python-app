@@ -52,7 +52,7 @@ jobs:
           mv latest_build/logs /mnt/cs_devops/ci-cd-python/latest_build/
 
       - name: Upload Pipeline Logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pipeline-logs
           path: latest_build/logs/  
