@@ -43,17 +43,28 @@ jobs:
         run: |
           mkdir -p /mnt/cs_devops/ci-cd-python/latest_build  # Ensure the directory exists
           docker save -o /mnt/cs_devops/ci-cd-python/latest_build/ci-cd-python-app_${{ env.IMAGE_TAG }}.tar ci-cd-python-app:${{ env.IMAGE_TAG }}
-     
-      # Step 7: Save Logs
+
+      # Step 7: Run container before capturing logs
+      - name: Run Container (Detached) for Logging
+        run: |
+          docker run -dit --name ci-cd-python-app ci-cd-python-app:${{ env.IMAGE_TAG }}
+          sleep 5  # Give the container time to start
+
+      # Step 8: Save Logs after ensuring container is running
       - name: Save Logs as Artifact
         run: |
-          mkdir -p latest_build/logs
-          docker logs ci-cd-python-app > latest_build/logs/pipeline_logs.txt
-          mv latest_build/logs /mnt/cs_devops/ci-cd-python/latest_build/
+          mkdir -p /mnt/cs_devops/ci-cd-python/latest_build/logs
+          docker logs ci-cd-python-app > /mnt/cs_devops/ci-cd-python/latest_build/logs/pipeline_logs.txt
 
+      # Step 9: Cleanup (Remove Container After Logging)
+      - name: Remove Container After Logging
+        run: |
+          docker stop ci-cd-python-app
+          docker rm ci-cd-python-app
+
+      # Step 10: Upload Pipeline Logs
       - name: Upload Pipeline Logs
         uses: actions/upload-artifact@v4
         with:
           name: pipeline-logs
-          path: latest_build/logs/  
-             
+          path: /mnt/cs_devops/ci-cd-python/latest_build/logs/             
