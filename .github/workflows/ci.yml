@@ -34,36 +34,42 @@ jobs:
       # Step 5: Build Docker image with unique tag
       - name: Build Docker Image With Unique Tag
         run: |
-          export IMAGE_TAG=$(date +%Y%m%d%H%M%S)  # Use a unique timestamp as the tag
+          export IMAGE_TAG=$(date +%Y%m%d%H%M%S)
           docker build --no-cache -t ci-cd-python-app:${IMAGE_TAG} .
-          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV  # Pass the tag to later steps
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
 
       # Step 6: Save Docker image in 'latest_build' folder
       - name: Save Docker Image to 'latest_build'
         run: |
-          mkdir -p /mnt/cs_devops/ci-cd-python/latest_build  # Ensure the directory exists
+          mkdir -p /mnt/cs_devops/ci-cd-python/latest_build
           docker save -o /mnt/cs_devops/ci-cd-python/latest_build/ci-cd-python-app_${{ env.IMAGE_TAG }}.tar ci-cd-python-app:${{ env.IMAGE_TAG }}
 
-      # Step 7: Run container before capturing logs
+      # Step 7: Run container (detached) for logging
       - name: Run Container (Detached) for Logging
         run: |
           docker run -dit --name ci-cd-python-app ci-cd-python-app:${{ env.IMAGE_TAG }}
-          sleep 5  # Give the container time to start
+          sleep 5
 
-      # Step 8: Save Logs after ensuring container is running
+      # Step 8: Capture logs and save as artifact
       - name: Save Logs as Artifact
         run: |
           mkdir -p /mnt/cs_devops/ci-cd-python/latest_build/logs
           docker logs ci-cd-python-app > /mnt/cs_devops/ci-cd-python/latest_build/logs/pipeline_logs.txt
-          sleep 5  # Ensure logs are fully flushed before stopping the container
+          sleep 5
 
-      # Step 9: Cleanup (Remove Container After Logging)
+      # Step 9: Cleanup (Remove container after logging)
       - name: Remove Container After Logging
         run: |
           docker stop ci-cd-python-app
           docker rm ci-cd-python-app
 
-      # Step 10: Upload Pipeline Logs
+      # Step 10: Copy pipeline logs to monitoring agent folder
+      - name: Copy Pipeline Logs to Monitor Agent
+        run: |
+          mkdir -p /mnt/cs_devops/monitor-agent/logs/pipeline_logs
+          cp -r /mnt/cs_devops/ci-cd-python/latest_build/logs /mnt/cs_devops/monitor-agent/logs/pipeline_logs/
+
+      # Step 11: Upload Pipeline Logs as artifact
       - name: Upload Pipeline Logs
         uses: actions/upload-artifact@v4
         with:
