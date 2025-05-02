@@ -74,4 +74,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pipeline-logs
-          path: /mnt/cs_devops/ci-cd-python/latest_build/logs/             
+          path: /mnt/cs_devops/ci-cd-python/latest_build/logs/
+      
+      # Need to remove logging steps because actual logging by the app is not happening            
