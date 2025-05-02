@@ -50,12 +50,12 @@ jobs:
           docker run -dit --name ci-cd-python-app ci-cd-python-app:${{ env.IMAGE_TAG }}
           sleep 5
 
-      # Step 8: Capture logs and save as artifact
+      # Step 8: Capture logs before container exits
       - name: Save Logs as Artifact
         run: |
-          mkdir -p /mnt/cs_devops/ci-cd-python/latest_build/logs
-          docker logs ci-cd-python-app > /mnt/cs_devops/ci-cd-python/latest_build/logs/pipeline_logs.txt
           sleep 5
+          docker logs ci-cd-python-app > /mnt/cs_devops/ci-cd-python/latest_build/logs/pipeline_logs.txt
+          
 
       # Step 9: Cleanup (Remove container after logging)
       - name: Remove Container After Logging
