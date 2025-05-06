@@ -15,11 +15,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Python environment
+      # Step 2: Set up Python environment and prepare Monitor Agent log directory
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
         with:
           python-version: 3.9
+      - name: Prepare Monitor Agent Log Directory
+        run: |
+          mkdir -p /mnt/cs_devops/monitor-agent/logs
 
       # Step 3: Install dependencies
       - name: Install dependencies
@@ -50,12 +53,12 @@ jobs:
           docker run -dit --name ci-cd-python-app ci-cd-python-app:${{ env.IMAGE_TAG }}
           sleep 5
 
-      # Step 8: Capture logs before container exits
+      # Step 8: Capture logs before container exits (unique logfile name)
       - name: Save Logs as Artifact
         run: |
           sleep 5
-          docker logs ci-cd-python-app > /mnt/cs_devops/ci-cd-python/latest_build/logs/pipeline_logs.txt
-          
+          mkdir -p /mnt/cs_devops/ci-cd-python/latest_build/logs
+          docker logs ci-cd-python-app > /mnt/cs_devops/ci-cd-python/latest_build/logs/pipeline_logs_${{ env.IMAGE_TAG }}.txt
 
       # Step 9: Cleanup (Remove container after logging)
       - name: Remove Container After Logging
@@ -63,11 +66,11 @@ jobs:
           docker stop ci-cd-python-app
           docker rm ci-cd-python-app
 
-      # Step 10: Copy pipeline logs to monitoring agent folder
+      # Step 10: Copy pipeline logs to monitoring agent folder without overwriting existing logs
       - name: Copy Pipeline Logs to Monitor Agent
         run: |
           mkdir -p /mnt/cs_devops/monitor-agent/logs/pipeline_logs
-          cp -r /mnt/cs_devops/ci-cd-python/latest_build/logs /mnt/cs_devops/monitor-agent/logs/pipeline_logs/
+          cp -rn /mnt/cs_devops/ci-cd-python/latest_build/logs/ /mnt/cs_devops/monitor-agent/logs/pipeline_logs/
 
       # Step 11: Upload Pipeline Logs as artifact
       - name: Upload Pipeline Logs
@@ -75,5 +78,3 @@ jobs:
         with:
           name: pipeline-logs
           path: /mnt/cs_devops/ci-cd-python/latest_build/logs/
-      
-      # Need to remove logging steps because actual logging by the app or may be I will leave it as it is            
