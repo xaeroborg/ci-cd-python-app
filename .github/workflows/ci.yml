@@ -78,3 +78,5 @@ jobs:
         with:
           name: pipeline-logs
           path: /mnt/cs_devops/ci-cd-python/latest_build/logs/
+      
+      # Just adding this line to watch initiate a git push to watch the worker log being copied before the runner completes
