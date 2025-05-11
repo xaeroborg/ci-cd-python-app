@@ -79,4 +79,4 @@ jobs:
           name: pipeline-logs
           path: /mnt/cs_devops/ci-cd-python/latest_build/logs/
       
-      # Again - initiate a git push to watch the worker log being copied with a slight delay of 10 secs before the runner completes
+      # Initiating a gitpush to predict a success after modifying unifying partial and historical log analysis
