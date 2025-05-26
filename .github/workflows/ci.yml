@@ -74,9 +74,9 @@ jobs:
 
       # Step 11: Upload Pipeline Logs as artifact
       - name: Upload Pipeline Logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: pipeline-logs
           path: /mnt/cs_devops/ci-cd-python/latest_build/logs/
       
-      # Initiating a gitpush to predict a success after modifying unifying partial and historical log analysis
+      # Initiating a gitpush by erroring @v3 to check automated remediation
