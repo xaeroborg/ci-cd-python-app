@@ -79,4 +79,4 @@ jobs:
           name: pipeline-logs
           path: /mnt/cs_devops/ci-cd-python/latest_build/logs/
       
-      # Initiating a gitpush by reverting back to @v4 to check automated remediation, grafana and prometheus working
+      # Initiating a gitpush - known success - to check automated remediation, grafana and prometheus working
